@@ -1,0 +1,38 @@
+# pipeprobe - application runtime config (example / template).
+#
+# Copy to configs/config.yaml and adjust. Secrets (db.password,
+# security.cypher_key) are intentionally left blank here: set them via env
+# (PIPEPROBE_DB_PASSWORD, PIPEPROBE_SECURITY_CYPHER_KEY), which always
+# overrides the file. Env precedence keeps secrets out of version control.
+
+app:
+  name: pipeprobe
+  version: 0.1.0
+  environment: dev              # dev | prod
+
+log:
+  level: info                   # debug | info | warn | error
+  format: json                  # json | text
+  output: stdout                # stdout | stderr | /var/log/pipeprobe.log
+
+server:
+  host: 0.0.0.0
+  port: 8080
+  read_timeout: 10s
+  write_timeout: 10s
+  shutdown_timeout: 15s
+  cors_allowed_origins:         # origins the React UI calls from
+    - http://localhost:5173     # Vite dev server
+
+db:
+  host: localhost
+  port: 5432
+  user: pipeprobe
+  password: ""                  # set via PIPEPROBE_DB_PASSWORD
+  sslmode: disable              # disable | require | verify-ca | verify-full
+  max_open_conns: 20
+  max_idle_conns: 5
+  conn_max_lifetime: 30m
+
+security:
+  cypher_key: ""                # base64 of a 16/24/32-byte key, e.g. openssl rand -base64 32; set via PIPEPROBE_SECURITY_CYPHER_KEY
