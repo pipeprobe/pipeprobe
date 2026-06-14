@@ -44,6 +44,9 @@ coverage/
 !.env.example
 *.local
 
+# Configuration files
+config.yaml
+
 # --- VS Code ---
 .vscode/
 *.code-workspace

@@ -1,0 +1,33 @@
+# Local Postgres for pipeprobe development.
+# Values line up with configs/config.example.yaml defaults:
+#   db.host=localhost  db.port=5432  db.user=pipeprobe  db.name=pipeprobe
+# The password is read from PIPEPROBE_DB_PASSWORD — the SAME variable the app
+# uses — so .env is the single source of truth for both.
+#
+# Usage:  docker compose up -d        (start in background)
+#         docker compose ps           (check health)
+#         docker compose logs -f db   (follow logs)
+#         docker compose down         (stop; keeps data)
+#         docker compose down -v      (stop and WIPE the data volume)
+ 
+services:
+  db:
+    image: postgres:18
+    container_name: pipeprobe-postgres
+    environment:
+      POSTGRES_USER: pipeprobe
+      POSTGRES_DB: pipeprobe_dev
+      POSTGRES_PASSWORD: ${PIPEPROBE_DB_PASSWORD:?set PIPEPROBE_DB_PASSWORD in your .env}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pipeprobe -d pipeprobe_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+ 
+volumes:
+  pgdata:
